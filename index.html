@@ -72,6 +72,7 @@
         #buttons-container {
             display: flex;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         #downloadBtn {
@@ -97,12 +98,14 @@
             margin: 30px auto;
             background-color: #000;
             border: 5px solid #ffffff;
-            display: none; /* Hide canvas initially */
+            display: none;
         }
 
         @media (max-width: 600px) {
             body {
                 padding: 0 20px;
+                justify-content: flex-start;
+                height: auto;
             }
 
             h1 {
@@ -120,6 +123,7 @@
                 width: 100%;
                 padding: 12px;
                 font-size: 0.9rem;
+                margin: 5px 0;
             }
 
             #downloadBtn {
@@ -130,6 +134,12 @@
 
             #buttons-container {
                 flex-direction: column;
+                width: 100%;
+            }
+
+            #canvas {
+                width: 300px;
+                height: 300px;
             }
         }
     </style>
@@ -155,6 +165,7 @@
 
     <script>
         let jsonData;
+        let searchValue = '';
 
         // CORS Proxy URL
         const corsProxy = 'https://corsproxy.io/?';
@@ -173,7 +184,7 @@
 
         // Function to search for the image
         function searchImage() {
-            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            searchValue = document.getElementById('searchInput').value.trim().toLowerCase();
             if (!jsonData) {
                 alert('Data not loaded yet.');
                 return;
@@ -216,12 +227,16 @@
             };
         }
 
-        // Function to download the upscaled image
+        // Function to download the upscaled image with a dynamic filename
         function downloadImage() {
             const canvas = document.getElementById('canvas');
             const link = document.createElement('a');
+
+            // Create a dynamic filename based on the searchValue
+            const filename = `OCTOGLYPH${searchValue.toUpperCase()}.png`;
+
             link.href = canvas.toDataURL('image/png');
-            link.download = 'upscaled_pixel_art.png';
+            link.download = filename;
             link.click();
         }
     </script>
