@@ -182,7 +182,7 @@
                 alert('Failed to load octo.txt');
             });
 
-        // Function to search for the image
+        // Function to search for the image in "meta.name" only
         function searchImage() {
             searchValue = document.getElementById('searchInput').value.trim().toLowerCase();
             if (!jsonData) {
@@ -190,10 +190,10 @@
                 return;
             }
 
+            // Search only in the "meta.name" field
             const result = jsonData.find(item => {
                 const name = item.meta.name.toLowerCase();
-                const id = item.id.toLowerCase();
-                return name.includes(searchValue) || id.includes(searchValue);
+                return name.includes(searchValue);
             });
 
             if (result) {
