@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Art Image Search and Download</title>
+    <title>Unofficial HiRes OctoGlyphs</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -33,9 +33,7 @@
     </style>
 </head>
 <body>
-    <h1>Search, Display and Download Pixel Art Image</h1>
-    <input type="file" id="fileInput" accept=".txt,.json">
-    <br>
+    <h1>Unofficial Hi-Res OctoGlyphs</h1>
     <input type="text" id="searchInput" placeholder="Enter number or name">
     <button onclick="searchImage()">Search</button>
 
@@ -49,27 +47,26 @@
     <script>
         let jsonData;
 
-        // Function to handle file input and read the file
-        document.getElementById('fileInput').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                try {
-                    jsonData = JSON.parse(e.target.result);
-                } catch (error) {
-                    alert('Invalid JSON format in file');
-                }
-            };
-
-            reader.readAsText(file);
-        });
+        // CORS Proxy URL
+        const corsProxy = 'https://corsproxy.io/?';
+        const octoUrl = encodeURIComponent('https://raw.githubusercontent.com/snoop-frog/octores/main/octo.txt');
+        
+        // Fetch the octo.txt file using a CORS proxy
+        fetch(corsProxy + octoUrl)
+            .then(response => response.text())
+            .then(data => {
+                jsonData = JSON.parse(data);
+            })
+            .catch(error => {
+                console.error('Error fetching octo.txt:', error);
+                alert('Failed to load octo.txt');
+            });
 
         // Function to search for the image
         function searchImage() {
             const searchValue = document.getElementById('searchInput').value.toLowerCase();
             if (!jsonData) {
-                alert('Please upload a valid file first.');
+                alert('Data not loaded yet.');
                 return;
             }
 
@@ -80,7 +77,7 @@
             });
 
             if (result) {
-                const imageUrl = `https://ord-mirror.magiceden.dev/content/${result.id}`;
+                const imageUrl = `https://ordinals.com/content/${result.id}`;
                 displayImage(imageUrl);
             } else {
                 alert('Image not found.');
@@ -90,10 +87,12 @@
         // Function to display the image on the canvas
         function displayImage(url) {
             const img = document.getElementById('pixelArtImage');
+            img.crossOrigin = "anonymous"; // Ensure CORS compliance
             img.src = url;
 
             const canvas = document.getElementById('canvas');
             const ctx = canvas.getContext('2d');
+            
             img.onload = function() {
                 // Clear canvas before drawing
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
