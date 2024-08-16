@@ -1,48 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unofficial HiRes OctoGlyphs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
+            font-family: 'Press Start 2P', cursive;
+            margin: 0;
+            padding: 0;
+            background: url('https://github.com/snoop-frog/octores/blob/main/background.gif?raw=true') no-repeat center center fixed;
+            background-size: cover;
+            color: #ffffff;
+            text-align: center;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-        input, button {
-            padding: 10px;
-            margin: 5px;
+
+        h1 {
+            font-size: 1.8rem;
+            margin-top: 20px;
+            color: #ffffff;
         }
-        #image-container img {
-            display: none; /* We hide the img element since we will use canvas */
+
+        #logo {
+            width: 200px;
+            margin: 20px auto;
         }
+
+        #input-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        input,
+        button {
+            padding: 12px;
+            margin: 10px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: none;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        input {
+            width: 220px;
+            text-align: center;
+        }
+
+        button {
+            background-color: #ff8800;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 220px;
+        }
+
+        button:hover {
+            background-color: #ff6600;
+        }
+
+        #buttons-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        #downloadBtn {
+            background-color: #4CAF50;
+            color: white;
+            display: none;
+            margin-left: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            transition: background-color 0.3s;
+            border: none;
+        }
+
+        #downloadBtn:hover {
+            background-color: #45a049;
+        }
+
         #canvas {
             image-rendering: pixelated;
             image-rendering: crisp-edges;
-            margin-top: 20px;
+            margin: 30px auto;
+            background-color: #000;
+            border: 5px solid #ffffff;
+            display: none; /* Hide canvas initially */
         }
-        #downloadBtn {
-            display: none;
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
+
+        @media (max-width: 600px) {
+            body {
+                padding: 0 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+                margin-top: 10px;
+            }
+
+            #logo {
+                width: 150px;
+                margin-bottom: 10px;
+            }
+
+            input,
+            button {
+                width: 100%;
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+
+            #downloadBtn {
+                margin-left: 0;
+                margin-top: 10px;
+                width: 100%;
+            }
+
+            #buttons-container {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
+
 <body>
+    <img id="logo" src="https://github.com/snoop-frog/octores/blob/main/logot.png?raw=true" alt="Logo">
     <h1>Unofficial Hi-Res OctoGlyphs</h1>
-    <input type="text" id="searchInput" placeholder="Enter number or name">
-    <button onclick="searchImage()">Search</button>
+
+    <div id="input-container">
+        <input type="text" id="searchInput" placeholder="Enter number or name">
+        <div id="buttons-container">
+            <button onclick="searchImage()">Search</button>
+            <button id="downloadBtn" onclick="downloadImage()">Download Image</button>
+        </div>
+    </div>
 
     <div id="image-container">
-        <img id="pixelArtImage" src="" alt="Upscaled Pixel Art">
+        <img id="pixelArtImage" src="" alt="Upscaled Pixel Art" style="display: none;">
     </div>
+
     <canvas id="canvas" width="380" height="380"></canvas>
-    <br>
-    <button id="downloadBtn" onclick="downloadImage()">Download Upscaled Image</button>
 
     <script>
         let jsonData;
@@ -50,7 +159,7 @@
         // CORS Proxy URL
         const corsProxy = 'https://corsproxy.io/?';
         const octoUrl = encodeURIComponent('https://raw.githubusercontent.com/snoop-frog/octores/main/octo.txt');
-        
+
         // Fetch the octo.txt file using a CORS proxy
         fetch(corsProxy + octoUrl)
             .then(response => response.text())
@@ -92,16 +201,17 @@
 
             const canvas = document.getElementById('canvas');
             const ctx = canvas.getContext('2d');
-            
-            img.onload = function() {
+
+            img.onload = function () {
                 // Clear canvas before drawing
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
+
                 // Draw the image scaled to 380x380
                 ctx.imageSmoothingEnabled = false; // Disable anti-aliasing for pixel art
                 ctx.drawImage(img, 0, 0, 380, 380);
 
-                // Show the download button once the image is ready
+                // Show the canvas and download button
+                canvas.style.display = 'block';
                 document.getElementById('downloadBtn').style.display = 'inline-block';
             };
         }
@@ -116,4 +226,5 @@
         }
     </script>
 </body>
+
 </html>
