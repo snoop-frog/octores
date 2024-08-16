@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Art Image Search and Download</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+        #image-container img {
+            display: none; /* We hide the img element since we will use canvas */
+        }
+        #canvas {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            margin-top: 20px;
+        }
+        #downloadBtn {
+            display: none;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Search, Display and Download Pixel Art Image</h1>
+    <input type="file" id="fileInput" accept=".txt,.json">
+    <br>
+    <input type="text" id="searchInput" placeholder="Enter number or name">
+    <button onclick="searchImage()">Search</button>
+
+    <div id="image-container">
+        <img id="pixelArtImage" src="" alt="Upscaled Pixel Art">
+    </div>
+    <canvas id="canvas" width="380" height="380"></canvas>
+    <br>
+    <button id="downloadBtn" onclick="downloadImage()">Download Upscaled Image</button>
+
+    <script>
+        let jsonData;
+
+        // Function to handle file input and read the file
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    jsonData = JSON.parse(e.target.result);
+                } catch (error) {
+                    alert('Invalid JSON format in file');
+                }
+            };
+
+            reader.readAsText(file);
+        });
+
+        // Function to search for the image
+        function searchImage() {
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            if (!jsonData) {
+                alert('Please upload a valid file first.');
+                return;
+            }
+
+            const result = jsonData.find(item => {
+                const name = item.meta.name.toLowerCase();
+                const id = item.id.toLowerCase();
+                return name.includes(searchValue) || id.includes(searchValue);
+            });
+
+            if (result) {
+                const imageUrl = `https://ord-mirror.magiceden.dev/content/${result.id}`;
+                displayImage(imageUrl);
+            } else {
+                alert('Image not found.');
+            }
+        }
+
+        // Function to display the image on the canvas
+        function displayImage(url) {
+            const img = document.getElementById('pixelArtImage');
+            img.src = url;
+
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            img.onload = function() {
+                // Clear canvas before drawing
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw the image scaled to 380x380
+                ctx.imageSmoothingEnabled = false; // Disable anti-aliasing for pixel art
+                ctx.drawImage(img, 0, 0, 380, 380);
+
+                // Show the download button once the image is ready
+                document.getElementById('downloadBtn').style.display = 'inline-block';
+            };
+        }
+
+        // Function to download the upscaled image
+        function downloadImage() {
+            const canvas = document.getElementById('canvas');
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'upscaled_pixel_art.png';
+            link.click();
+        }
+    </script>
+</body>
+</html>
